@@ -44,7 +44,16 @@ class MainActivity : AppCompatActivity(){
         // If the service is not running then start it
         if (!isServiceRunning(serviceClass)) {
             // Start the service
-            startService(serviceIntent)
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+                // Do something for OREO and above versions
+                startForegroundService(serviceIntent)
+            } else{
+                // do something for phones running an SDK before OREO
+                startService(serviceIntent)
+            }
+
+
             bindService(serviceIntent, myConnection, Context.BIND_AUTO_CREATE)
         } else {
             toast("Service already running.")
@@ -54,7 +63,13 @@ class MainActivity : AppCompatActivity(){
         button_start.setOnClickListener{
             if (!isServiceRunning(serviceClass)) {
                 // Start the service
-                startService(serviceIntent)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+                    // Do something for OREO and above versions
+                    startForegroundService(serviceIntent)
+                } else{
+                    // do something for phones running an SDK before OREO
+                    startService(serviceIntent)
+                }
                 bindService(serviceIntent, myConnection, Context.BIND_AUTO_CREATE)
             } else {
                 toast("Service already running.")
