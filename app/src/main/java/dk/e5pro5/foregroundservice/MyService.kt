@@ -10,15 +10,12 @@ import android.hardware.SensorManager
 import android.os.Binder
 import android.os.IBinder
 import android.widget.Toast
-import java.text.SimpleDateFormat
-import java.util.*
 
 class MyService : Service(), SensorEventListener {
 
 
     private var mSensorManager: SensorManager? = null
     private var mStepDetector: Sensor? =null
-    private var mStepsDBHelper: StepsDBHelper? = null
     private val myBinder = MyLocalBinder()
     private var counter=0
     override fun onCreate() {
@@ -29,7 +26,6 @@ class MyService : Service(), SensorEventListener {
             mStepDetector= mSensorManager!!.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
             mSensorManager!!.registerListener(this, mStepDetector,
                 SensorManager.SENSOR_DELAY_NORMAL)
-            mStepsDBHelper = StepsDBHelper(this)
         }
         else{
             Toast.makeText(this, "No Step Detector sensor was found!",
@@ -44,13 +40,7 @@ class MyService : Service(), SensorEventListener {
     fun getSteps(): Int{
         return counter
     }
-    /*
-    fun getCurrentTime(): String {
-        val dateformat = SimpleDateFormat("HH:mm:ss MM/dd/yyyy",
-            Locale.US)
-        return dateformat.format(Date())
-    }
-    */
+
     inner class MyLocalBinder : Binder() {
         fun getService() : MyService {
             return this@MyService
@@ -74,8 +64,6 @@ class MyService : Service(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         counter+= 1
-        //txtWalk.text = counter.toString()
-        mStepsDBHelper!!.createStepsEntry()
     }
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }

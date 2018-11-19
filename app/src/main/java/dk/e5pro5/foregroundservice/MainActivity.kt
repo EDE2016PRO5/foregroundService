@@ -12,19 +12,12 @@ import android.content.ServiceConnection
 import android.os.AsyncTask
 import android.os.IBinder
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.BaseAdapter
-import android.widget.TextView
 
 class MainActivity : AppCompatActivity(){
 
     var myService: MyService? = null
     var isBound = false
 
-    lateinit var mStepCountList: ArrayList<DateStepsModel>
     private val myConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName,
                                         service: IBinder) {
@@ -37,11 +30,9 @@ class MainActivity : AppCompatActivity(){
             isBound = false
         }
     }
-    fun showTime() {
+    fun showSteps() {
         val currentSteps=myService?.getSteps()
         toast(currentSteps.toString())
-        //val currentTime = myService?.getCurrentTime()
-        //toast(currentTime.toString())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,12 +50,6 @@ class MainActivity : AppCompatActivity(){
             toast("Service already running.")
             bindService(serviceIntent, myConnection, Context.BIND_AUTO_CREATE)
         }
-
-        getDataForList()
-        //val myAdapter = ListAdapter(this,0,mStepCountList)
-        val myAdapter=ListAdapter(this,0,mStepCountList)
-        //Set adapter of the ListView
-        main_list_view.adapter=myAdapter
 
         button_start.setOnClickListener{
             if (!isServiceRunning(serviceClass)) {
@@ -101,35 +86,13 @@ class MainActivity : AppCompatActivity(){
             } else {
                 toast("Service is stopped.")
             }
-            showTime()
+            showSteps()
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState)
-        //outState.putInt("STATE_STEPS", counter)
-    }
-
-    override fun onDestroy() {
-        /*
-        val serviceClass = MyService::class.java
-        val serviceIntent = Intent(applicationContext, serviceClass)
-        try {
-            unbindService(myConnection)
-        } catch (e: IllegalArgumentException) {
-            Log.w("MainActivity", "Error Unbinding Service.")
-        }
-        if (isServiceRunning(MyService::class.java)) {
-            stopService(serviceIntent)
-        }
-        */
-/*
-        if(isFinishing){
-            mSensorManager!!.unregisterListener(this)
-        }
-*/
-        super.onDestroy()
     }
 
     // Custom method to determine whether a service is running
@@ -144,10 +107,6 @@ class MainActivity : AppCompatActivity(){
             }
         }
         return false
-    }
-    fun getDataForList() {
-        val mStepsDBHelper = StepsDBHelper(this)
-        mStepCountList = mStepsDBHelper.readStepsEntries()
     }
 
 // Extension function to show toast message
