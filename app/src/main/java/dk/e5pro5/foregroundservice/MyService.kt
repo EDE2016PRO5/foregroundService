@@ -7,21 +7,17 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Binder
+import android.os.AsyncTask
 import android.os.IBinder
 import android.widget.Toast
 
 class MyService : Service(), SensorEventListener {
-
-
     private var mSensorManager: SensorManager? = null
     private var mStepDetector: Sensor? =null
-    private val myBinder = MyLocalBinder()
     private var counter=0
     override fun onCreate() {
         super.onCreate()
         mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-
         if(mSensorManager!!.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) != null){
             mStepDetector= mSensorManager!!.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
             mSensorManager!!.registerListener(this, mStepDetector,
@@ -31,27 +27,19 @@ class MyService : Service(), SensorEventListener {
             Toast.makeText(this, "No Step Detector sensor was found!",
                 Toast.LENGTH_LONG).show()
         }
-
     }
 
-    override fun onBind(intent: Intent): IBinder? {
-        return myBinder
-    }
-    fun getSteps(): Int{
-        return counter
-    }
-
-    inner class MyLocalBinder : Binder() {
-        fun getService() : MyService {
-            return this@MyService
-        }
-    }
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         // Send a notification that service is started
         toast("Service started.")
-
+        getBackgroundNotification(applicationContext,this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
         return Service.START_STICKY
     }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         toast("Service destroyed.")
@@ -68,7 +56,7 @@ class MyService : Service(), SensorEventListener {
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
     // Extension function to show toast message
-    fun Context.toast(message:String){
+    private fun Context.toast(message:String){
         Toast.makeText(applicationContext,message,Toast.LENGTH_SHORT).show()
     }
 }
