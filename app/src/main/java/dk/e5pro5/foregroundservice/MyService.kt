@@ -32,7 +32,7 @@ class MyService : Service(), SensorEventListener {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         // Send a notification that service is started
         toast("Service started.")
-        getBackgroundNotification(applicationContext,this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+        GetBackgroundNotification(applicationContext,this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
         return Service.START_STICKY
     }
 

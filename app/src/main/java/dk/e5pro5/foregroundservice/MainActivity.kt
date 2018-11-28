@@ -8,7 +8,6 @@ import android.content.Context
 import android.widget.Toast
 import android.content.Intent
 
-
 class MainActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,22 +16,6 @@ class MainActivity : AppCompatActivity(){
 
         val serviceClass = MyService::class.java
         val serviceIntent = Intent(applicationContext, serviceClass)
-        // If the service is not running then start it
-        if (!isServiceRunning(serviceClass)) {
-            // Start the service
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
-                // Do something for OREO and above versions
-                //Similar to startService(Intent), but with an implicit promise that the
-                // Service will call startForeground(int, android.app.Notification) once it begins running.
-                startForegroundService(serviceIntent)
-
-            } else{
-                // do something for phones running an SDK before OREO
-                startService(serviceIntent)
-            }
-        } else {
-            toast("Service already running.")
-        }
 
         button_start.setOnClickListener{
             if (!isServiceRunning(serviceClass)) {
@@ -60,14 +43,6 @@ class MainActivity : AppCompatActivity(){
                 toast("Service already stopped.")
             }
         }
-        // Get the service status
-        button_stats.setOnClickListener{
-            if (isServiceRunning(serviceClass)) {
-                toast("Service is running.")
-            } else {
-                toast("Service is stopped.")
-            }
-        }
     }
 
     // Custom method to determine whether a service is running
@@ -87,5 +62,6 @@ class MainActivity : AppCompatActivity(){
     // Extension function to show toast message
     private fun Context.toast(message:String){
     Toast.makeText(applicationContext,message,Toast.LENGTH_SHORT).show()
-}}
+}
+}
 
