@@ -17,14 +17,18 @@ class MainActivity : AppCompatActivity(){
         val serviceClass = MyService::class.java
         val serviceIntent = Intent(applicationContext, serviceClass)
 
+        //Button to start service
         button_start.setOnClickListener{
             if (!isServiceRunning(serviceClass)) {
-                // Start the service
+
+                // Do something for OREO and above versions
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
-                    // Do something for OREO and above versions
+                    // Start the service
                     startForegroundService(serviceIntent)
-                } else{
-                    // do something for phones running an SDK before OREO
+                }
+                // do something for phones running an SDK before OREO
+                else{
+                    // Start the service
                     startService(serviceIntent)
                 }
             } else {
@@ -48,8 +52,8 @@ class MainActivity : AppCompatActivity(){
     // Custom method to determine whether a service is running
     private fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        // Loop through the running services
 
+        // Loop through the running services
         for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.name == service.service.className) {
                 // If the service is running then return true
